@@ -27,6 +27,38 @@ class ViewController: UIViewController {
         }
         self.navigationController?.pushViewController(nvc, animated: true)
     }
+    //== 画像設定
+    @IBOutlet weak var btnImage: UIButton!
+    @IBAction func actImage(_ sender: Any) {
+        TKLog(mask: .Case01, "[\(#function):\(#line)] 画像設定するよ")
+        //===シミュレータ時の機能抑止
+        if Platform.isSimulator {
+            let actionSheetController = UIAlertController(title: "画像設定", message: "カメラ機能はシミュレータでは使えません", preferredStyle: .actionSheet)
+            let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in }
+            actionSheetController.addAction(cancelAction)
+            present(actionSheetController, animated: true, completion: nil)
+            return
+        }
+        //===カメラと既存画像を選ばせる
+        let actionSheetController = UIAlertController(title: "画像設定", message: "読み込む画像ソースを選択してください", preferredStyle: .actionSheet)
+        let cancelAction: UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in }
+        actionSheetController.addAction(cancelAction)
+        actionSheetController.addAction(UIAlertAction(title: "写真を撮る" , style: .default) { action -> Void in
+            let vc = UIImagePickerController()
+            vc.sourceType = UIImagePickerControllerSourceType.camera
+            vc.delegate = self
+            self.present(vc, animated: true, completion: nil)
+        })
+        actionSheetController.addAction(UIAlertAction(title: "既存の画像を選択" , style: .default) { action -> Void in
+            let vc = UIImagePickerController()
+            vc.sourceType = UIImagePickerControllerSourceType.photoLibrary
+            vc.delegate = self
+            self.present(vc, animated: true, completion: nil)
+        })
+        present(actionSheetController, animated: true, completion: nil)
+    }
+    @IBOutlet weak var ivwImage: UIImageView!
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,13 +104,22 @@ class ViewController: UIViewController {
             }
         }
     }
-    
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
 }
-
+extension ViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    //キャンセル時
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+    //画像指定時
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        picker.dismiss(animated: true, completion: {
+            if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+                self.ivwImage.image = image
+            }
+        })
+    }
+}

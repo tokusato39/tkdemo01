@@ -16,15 +16,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
-        
-        
-//            if let navigationController = rootViewController as? BaseNavigationController {
-//                var isAnimated: Bool = false
-//                if let _ = vc as? TLSearchViewController { isAnimated = true }
-//                navigationController.pushViewController(vc, animated: isAnimated)
-////                self.window?.rootViewController?.presentViewController(vc, animated: false, completion: {})
-//        }
 
         return true
     }

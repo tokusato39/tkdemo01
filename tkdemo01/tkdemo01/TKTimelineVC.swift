@@ -39,28 +39,35 @@ class TKTimelineVC: UIViewController {
     func initWithID(twAccount: ACAccount?) {
         TKLog(mask: .Always, "[\(#function):\(#line)] TwitterID[\(twAccount?.username)]を設定して初期化する")
         if let _twAccount = twAccount {
-            TKLog(mask: .Always, "[\(#function):\(#line)] TwitterID[\(_twAccount.username)]を設定して初期化する2")
             self.twID = _twAccount
         }
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         TKLog(mask: .Always, "[\(#function):\(#line)] viewDidAppear")
-        
         //指定タイムラインを取得する
         if let _twID = self.twID {
-            TKLog(mask: .Always, "[\(#function):\(#line)] viewDidAppear2")
             self.lblTitle.text = "\(_twID)のタイムライン"
             self.getTimeline()
-            TKLog(mask: .Always, "[\(#function):\(#line)] viewDidAppear3")
+        }
+    }
+    func showLoadingView(isLoading: Bool) {
+        let mainQueue = DispatchQueue.main
+        mainQueue.async {
+            if isLoading {
+                self.waitVW.isHidden = false
+                self.loadingVW.startAnimating()
+            } else {
+                self.waitVW.isHidden = true
+                self.loadingVW.stopAnimating()
+            }
         }
     }
     func getTimeline() {
         TKLog(mask: .Always, "[\(#function):\(#line)] [\(self.twID)]タイムライン取得")
-        self.waitVW.isHidden = false
-        self.loadingVW.startAnimating()
+        self.showLoadingView(isLoading: true)
 
-        let urlTwTl = NSURL(string: "https://api.twitter.com/1.1/statuses/home_timeline.json?count=100")
+        let urlTwTl = NSURL(string: "https://api.twitter.com/1.1/statuses/home_timeline.json?count=100")//最新100件固定
         let request = SLRequest(forServiceType: SLServiceTypeTwitter,
                                 requestMethod: .GET,
                                 url: urlTwTl as URL!,
@@ -70,6 +77,7 @@ class TKTimelineVC: UIViewController {
         request?.perform { (data, response, error) -> Void in
             if error != nil {
                 TKLog(mask: .Always, "[\(#function):\(#line)] [\(self.twID)]タイムライン取得 エラー")
+                self.showLoadingView(isLoading: false)
             } else {
                 do {
                     TKLog(mask: .Always, "[\(#function):\(#line)] [\(self.twID)]タイムライン取得 成功")
@@ -92,10 +100,11 @@ class TKTimelineVC: UIViewController {
                     let mainQueue = DispatchQueue.main
                     mainQueue.async {
                         self.tableView.reloadData()
-                        self.waitVW.isHidden = true
+                        self.showLoadingView(isLoading: false)
                     }
                 }  catch let error as NSError {
                     TKLog(mask: .Always, "[\(#function):\(#line)] タイムライン取得  パースエラー[\(error.description)]")
+                    self.showLoadingView(isLoading: false)
                 }
             }
         }

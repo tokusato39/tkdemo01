@@ -36,4 +36,20 @@ func TKLog(mask: TKLog_Mask = .Never, _ message: @autoclosure () -> String) {
         }
     #endif
 }
-
+//===シミュレータでカメラ起動するとクラッシュするので、それを避けるためにシミュレータを判別する
+#if DEBUG
+#if (arch(i386) || arch(x86_64)) && os(iOS)
+let DEVICE_IS_SIMULATOR = true
+    #else
+let DEVICE_IS_SIMULATOR = false
+#endif
+    struct Platform {
+        static let isSimulator: Bool = {
+            var isSim = false
+            #if arch(i386) || arch(x86_64)
+                isSim = true
+            #endif
+            return isSim
+        }()
+    }
+#endif
