@@ -13,7 +13,6 @@ import Social
 class TKTimelineVC: UIViewController {
     //== 引き渡し変数
     var twID: ACAccount?
-    
     var arrDispData = [objTweet]()
     
     @IBOutlet weak var lblTitle: UILabel!
@@ -22,19 +21,15 @@ class TKTimelineVC: UIViewController {
     @IBOutlet weak var waitVW: UIView!
     @IBOutlet weak var loadingVW: UIActivityIndicatorView!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         TKLog(mask: .Always, "[\(#function):\(#line)] タイムラインVC表示")
-        
         // テーブルビュー
         self.tableView.delegate = self
         self.tableView.dataSource = self
         // 表示セルの準備
         self.tableView.register(UINib(nibName: "TVCell_Twitter",  bundle: nil), forCellReuseIdentifier: "TVCell_Twitter")
-
     }
-    
     //TwitterIDを設定して初期化しておく
     func initWithID(twAccount: ACAccount?) {
         TKLog(mask: .Always, "[\(#function):\(#line)] TwitterID[\(twAccount?.username)]を設定して初期化する")
@@ -73,7 +68,6 @@ class TKTimelineVC: UIViewController {
                                 url: urlTwTl as URL!,
                                 parameters: nil)
         request?.account = self.twID
-        
         request?.perform { (data, response, error) -> Void in
             if error != nil {
                 TKLog(mask: .Always, "[\(#function):\(#line)] [\(self.twID)]タイムライン取得 エラー")
@@ -95,7 +89,6 @@ class TKTimelineVC: UIViewController {
                         model.date = _date
                         model.tweet = _text
                         self.arrDispData.append(model)
-
                     }
                     let mainQueue = DispatchQueue.main
                     mainQueue.async {
@@ -109,14 +102,11 @@ class TKTimelineVC: UIViewController {
             }
         }
     }
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 }
-
-
 
 extension TKTimelineVC: UITableViewDelegate, UITableViewDataSource {
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -132,12 +122,9 @@ extension TKTimelineVC: UITableViewDelegate, UITableViewDataSource {
     }
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let twCell: TVCell_Twitter = tableView.dequeueReusableCell(withIdentifier: "TVCell_Twitter", for: indexPath) as! TVCell_Twitter
-
         let model = self.arrDispData[indexPath.row]
         twCell.initCell(num: indexPath.row, tweet: model)
         twCell.dispCell()
-        
         return twCell
     }
-    
 }

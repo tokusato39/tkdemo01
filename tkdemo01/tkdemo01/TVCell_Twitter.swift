@@ -5,9 +5,7 @@
 //  Created by TOKUMITSU, Satoshi on 2017/01/12.
 //  Copyright © 2017年 tokumi. All rights reserved.
 //
-
 import UIKit
-
 
 //保持させたい情報（必要なもののみ抜粋）
 class objTweet: NSObject {
@@ -66,17 +64,12 @@ class TVCell_Twitter: UITableViewCell {
         let areaHeight = ceil(szFitSize.height)//切り上げ
         return areaHeight
     }
-
-
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
         // Configure the view for the selected state
     }
-    
 }
